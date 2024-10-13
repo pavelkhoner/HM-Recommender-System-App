@@ -107,26 +107,42 @@ def main():
             i += 1
         return plt.show()
 
-    # print the image of the articles recommended by CB
+    # print the image of the articles recommended
     def print_image_cf(results_cf, n_recs):
-        f, ax = plt.subplots(1, n_recs, figsize=(100,50))
-        i = 0
+        images_per_row = 2
+        rows = (n_recs // images_per_row) + int(n_recs % images_per_row > 0)
+
+        fig, axarr = plt.subplots(rows, images_per_row, figsize=(20, 10 * rows))  # Создаем фигуру
         article_id_cf = results_cf['article_id']
+
+        if rows == 1:
+            axarr = [axarr]
+
+        i = 0
         for index, data in enumerate(article_id_cf):
+            row = i // images_per_row
+            col = i % images_per_row
             desc = articles_df2[articles_df2['article_id'] == data]['detail_desc'].iloc[0]
             desc_list = desc.split(' ')
             for j, elem in enumerate(desc_list):
                 if j > 0 and j % 5 == 0:
                     desc_list[j] = desc_list[j] + '\n'
             desc = ' '.join(desc_list)
-            img = mpimg.imread(f'Data/h-and-m-personalized-fashion-recommendations/images/0{str(data)[:2]}/0{int(data)}.jpg')
-            ax[i].imshow(img)
-            ax[i].set_xticks([], [])
-            ax[i].set_yticks([], [])
-            ax[i].grid(False)
-            ax[i].set_xlabel(desc, fontsize=90)
+            img = mpimg.imread(
+                f'Data/h-and-m-personalized-fashion-recommendations/images/0{str(data)[:2]}/0{int(data)}.jpg')
+
+            axarr[row][col].imshow(img)
+            axarr[row][col].set_xticks([])
+            axarr[row][col].set_yticks([])
+            axarr[row][col].grid(False)
+            axarr[row][col].set_xlabel(desc, fontsize=14)
             i += 1
-        return plt.show()
+
+        for j in range(i, rows * images_per_row):
+            fig.delaxes(axarr[j // images_per_row][j % images_per_row])
+
+        # Передаем объект fig в st.pyplot
+        st.pyplot(fig)
 
     st.sidebar.subheader('This recommendation system can make two forms of recommendations.')
     st.sidebar.write('Existing customers looking for articles they might like.')
