@@ -38,7 +38,7 @@ def main():
     # Def function using model to return recommendations - collaborative filtering
     def customer_article_recommend(customer,n_recs):
         
-        have_bought = list(df_customer.loc[customer, 'article_id'])
+        have_bought = df_customer.loc[customer, 'article_id']
         not_bought = articles_df.copy()
         # [not_bought.drop(x, inplace=True) for x in have_bought]
         not_bought.drop(have_bought, inplace=True)
@@ -152,7 +152,7 @@ def main():
             results = customer_article_recommend(customer_input, n_recs)
             st.table(results)
             result_image = print_image_cf(results, n_recs)
-            st.set_option('deprecation.showPyplotGlobalUse', False)
+            # st.set_option('deprecation.showPyplotGlobalUse', False)
             st.pyplot(result_image)
 
 
@@ -166,5 +166,5 @@ def main():
             results2 = article_recommend(article_input, n_recs2)
             st.table(results2)
             result_image2 = print_image_cf(results2, n_recs2)
-            st.set_option('deprecation.showPyplotGlobalUse', False)
+            # st.set_option('deprecation.showPyplotGlobalUse', False)
             st.pyplot(result_image2)
