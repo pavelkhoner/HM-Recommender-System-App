@@ -27,8 +27,10 @@ def main():
     articles_df2 = pd.read_csv('Data/articles.csv.zip')
     meta_data = pd.read_csv('Data/out_content.zip')
 
-    # Загруженные модели
-    collab_model = pickle.load(open('Model/collaborative_model.sav', 'rb'))
+    # Загрузка трех моделей коллаборативной фильтрации
+    model_svd = pickle.load(open('Model/collaborative_model_svd.sav', 'rb'))
+    model_nmf = pickle.load(open('Model/collaborative_model_NMF.sav', 'rb'))
+    model_svdpp = pickle.load(open('Model/collaborative_model_svdpp.sav', 'rb'))
 
     # Функция для добавления товаров в список желаемого
     def add_to_wishlist(article_id):
@@ -40,14 +42,17 @@ def main():
         if article_id in st.session_state['wishlist']:
             st.session_state['wishlist'].remove(article_id)
 
-    # Функция для формирования рекомендаций
-    def generate_recommendations_from_wishlist(n_recs):
+    # Функция для генерации рекомендаций на основе коллаборативной модели
+    def generate_recommendations_from_wishlist(n_recs, model):
         if not st.session_state['wishlist']:
             st.write("Ваш список желаемого пуст.")
             return None
         recommendations = []
         for article_id in st.session_state['wishlist']:
-            article_recommendations = articles_df2.sample(n=n_recs)  # Пример, можно заменить на содержательный алгоритм
+            article_recommendations = articles_df2.copy()
+            article_recommendations['score'] = article_recommendations['article_id'].apply(
+                lambda x: model.predict(st.session_state['wishlist'][0], x).est)  # Пример для 1-го пользователя
+            article_recommendations = article_recommendations.sort_values(by='score', ascending=False).head(n_recs)
             recommendations.append(article_recommendations)
         recommendations_df = pd.concat(recommendations)
         return recommendations_df
@@ -144,9 +149,19 @@ def main():
             if st.button("Показать еще"):
                 st.session_state['shown_count'] += 20
 
+        # Выбор модели рекомендаций
+        st.sidebar.subheader("Выберите модель для рекомендаций")
+        model_type = st.sidebar.selectbox("Модель", ["SVD", "NMF", "SVD++"])
+
         # Кнопка рекомендаций
         if st.button("Получить рекомендации"):
-            recommendations = generate_recommendations_from_wishlist(5)
+            if model_type == "SVD":
+                recommendations = generate_recommendations_from_wishlist(5, model_svd)
+            elif model_type == "NMF":
+                recommendations = generate_recommendations_from_wishlist(5, model_nmf)
+            elif model_type == "SVD++":
+                recommendations = generate_recommendations_from_wishlist(5, model_svdpp)
+
             if recommendations is not None:
                 st.subheader("Рекомендации:")
                 st.table(recommendations[['prod_name', 'product_type_name', 'product_group_name']])
