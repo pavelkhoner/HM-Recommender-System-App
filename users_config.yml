@@ -1,0 +1,39 @@
+cookie:
+  expiry_days: 30
+  key: some_signature_key # Must be a string
+  name: some_cookie_name
+credentials:
+  usernames:
+    avigovskij:
+      email: obisessionprime@gmail.com
+      failed_login_attempts: 0 # Will be managed automatically
+      first_name: Anton
+      last_name: Vigovskij
+      logged_in: False # Will be managed automatically
+      password: test_password # Will be hashed automatically
+      roles: # Optional
+        - admin
+        - editor
+        - viewer
+    pkhoner:
+      email: Khonerworki@gmail.com
+      failed_login_attempts: 0 # Will be managed automatically
+      first_name: Pavel
+      last_name: Khoner
+      logged_in: False # Will be managed automatically
+      password: test_password # Will be hashed automatically
+      roles: # Optional
+        - admin
+        - editor
+        - viewer
+    aarsentiev:
+      email: a.4rsentev@yandex.ru
+      failed_login_attempts: 0 # Will be managed automatically
+      first_name: Alexander
+      last_name: Arsentiev
+      logged_in: False # Will be managed automatically
+      password: test_password # Will be hashed automatically
+      roles: # Optional
+        - admin
+        - editor
+        - viewer
