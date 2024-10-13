@@ -291,4 +291,5 @@ dependencies:
     - wrapt==1.12.1
     - yapf==0.32.0
     - yellowbrick==1.4
+    - streamlit-authenticator==0.4.1
 prefix: /opt/anaconda3/envs/learn-env
